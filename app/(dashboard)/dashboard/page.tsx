@@ -1,12 +1,7 @@
 import React from 'react'
 import { Plus } from 'lucide-react'
 
-interface trips {
-    name: string,
-    date: string,
-    status: string,
-    budget: string,
-}
+
 
 const Page = () => {
     return (
