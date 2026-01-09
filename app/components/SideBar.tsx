@@ -1,29 +1,25 @@
-import React from 'react'
+"use client"
+
 import Link from 'next/link'
 import { LayoutDashboard, Map, PiggyBank, Settings, Plus, LogOut } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import React from "react";
 
 interface SideBarLinkProps {
     href: string;
     icon: React.ReactNode;
     label: string;
-    active?: boolean;
 }
 
-const SideBarLink = ({ href, icon, label, active }: SideBarLinkProps) => {
+const SideBarLink = ({ href, icon, label }: SideBarLinkProps) => {
+    const pathname = usePathname()
+    const active = pathname === href
     return (
         <Link
             href={href}
-            className={`
-                flex items-center gap-3 px-4 py-2.5 rounded-md transition-all duration-200 text-sm font-medium
-                ${active
-                    ? 'bg-zinc-100 text-zinc-900'
-                    : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900'
-                }
-            `}
+            className={`flex items-center gap-3 px-4 py-2.5 transition-all duration-200 text-sm font-medium ${active ? 'bg-(--bg-button) text-(--text-primary)' : 'text-(--text-primary)  hover:text-(--text-primary)'}`}
         >
-            <span className={`
-                ${active ? 'text-zinc-900' : 'text-zinc-400 group-hover:text-zinc-500'}
-            `}>
+            <span className={`${active ? 'text-(--text-primary)' : 'text-(--text-secondary) hover:bg-(--bg-button) hover:text-(--text-primary)'}`}>
                 {icon}
             </span>
             <span>{label}</span>
@@ -33,22 +29,22 @@ const SideBarLink = ({ href, icon, label, active }: SideBarLinkProps) => {
 
 const SideBar = () => {
     return (
-        <div className="h-full flex flex-col bg-white border-r border-zinc-200">
+        <div className="h-screen flex flex-col bg-(--sidebar-bg) border-r border-(--border-subtle) sticky top-0 left-0">
             {/* Logo Section */}
             <div className="p-6">
                 <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-zinc-900 rounded-md flex items-center justify-center">
+                    <div className="w-8 h-8 bg-(--bg-dark) rounded-md flex items-center justify-center">
                         <Map className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-lg font-bold uppercase tracking-wider text-zinc-900">Samuel&#39;s</span>
+                    <span className="text-lg font-bold uppercase tracking-wider text-(--text-primary)">Samuel&#39;s</span>
                 </div>
             </div>
 
             {/* Create Trip Action */}
             <div className="px-4 mb-8">
-                <button className="w-full flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white py-2.5 px-4 rounded-md transition-all shadow-sm font-medium text-sm">
+                <button className="w-full flex items-center justify-center gap-2 bg-(--bg-dark) hover:bg-(--bg-dark-subtle) text-white py-2.5 px-4 transition-all shadow-sm font-medium text-sm">
                     <Plus className="w-4 h-4" />
-                    <span>New trip</span>
+                    <span className="capitalize">Plan a new trip</span>
                 </button>
             </div>
 
@@ -58,7 +54,6 @@ const SideBar = () => {
                     href="/dashboard"
                     icon={<LayoutDashboard className="w-4 h-4" />}
                     label="Dashboard"
-                    active
                 />
                 <SideBarLink
                     href="/trips"
@@ -78,16 +73,16 @@ const SideBar = () => {
             </nav>
 
             {/* User Profile / Footer */}
-            <div className="p-4 border-t border-zinc-100">
-                <div className="flex items-center gap-3 p-2 rounded-md hover:bg-zinc-50 transition-colors cursor-pointer group">
-                    <div className="w-9 h-9 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 text-xs font-medium border border-zinc-200">
+            <div className="p-4 border-t border-(--border-subtle)">
+                <div className="flex items-center gap-3 p-2 rounded-md hover:bg-(--bg-button) transition-colors cursor-pointer group">
+                    <div className="w-9 h-9 rounded-full bg-(--bg-super-subtle) flex items-center justify-center text-(--text-secondary) text-xs font-medium border border-(--border-subtle)">
                         SM
                     </div>
                     <div className="flex-1 overflow-hidden">
-                        <p className="text-sm font-medium text-zinc-900 truncate">Samuel Mukabi</p>
-                        <p className="text-xs text-zinc-500 truncate">samuel@example.com</p>
+                        <p className="text-sm font-medium text-(--text-primary) truncate">Samuel Mukabi</p>
+                        <p className="text-xs text-(--text-secondary) truncate">samuel@example.com</p>
                     </div>
-                    <LogOut className="w-4 h-4 text-zinc-400 group-hover:text-zinc-600 transition-colors" />
+                    <LogOut className="w-4 h-4 text-(--text-primary) transition-colors" />
                 </div>
             </div>
         </div>

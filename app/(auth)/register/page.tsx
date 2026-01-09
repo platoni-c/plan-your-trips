@@ -31,7 +31,7 @@ export default function Page() {
                             <h2 className="text-2xl font-medium text-zinc-900 tracking-tight">
                                 Create account
                             </h2>
-                            <p className="mt-2 text-sm text-zinc-500">
+                            <p className="mt-2 text-sm text-(--text-secondary)">
                                 Already have an account?{" "}
                                 <Link
                                     href="/login"
@@ -46,7 +46,7 @@ export default function Page() {
                             <div className="space-y-1.5">
                                 <label
                                     htmlFor="name"
-                                    className="block text-xs font-medium text-zinc-500 uppercase tracking-wider"
+                                    className="block text-xs font-medium text-(--text-primary) uppercase tracking-wider"
                                 >
                                     Full Name
                                 </label>
@@ -55,7 +55,7 @@ export default function Page() {
                                     name="name"
                                     type="text"
                                     required
-                                    className="block w-full rounded-md border-0 bg-zinc-50 px-4 py-3.5 text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-200 placeholder:text-zinc-400 focus:bg-white focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6 transition-all duration-200 focus:outline-none"
+                                    className="block w-full rounded-md border-0 bg-zinc-50 px-4 py-3.5 text-zinc-900 shadow-sm ring-1 ring-inset ring-(--input-border) placeholder:text-(--input-placeholder) focus:bg-white focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6 transition-all duration-200 focus:outline-none"
                                     placeholder="Taylor Traveler"
                                 />
                             </div>
@@ -63,7 +63,7 @@ export default function Page() {
                             <div className="space-y-1.5">
                                 <label
                                     htmlFor="email"
-                                    className="block text-xs font-medium text-zinc-500 uppercase tracking-wider"
+                                    className="block text-xs font-medium text-(--text-primary) uppercase tracking-wider"
                                 >
                                     Email
                                 </label>
@@ -72,7 +72,7 @@ export default function Page() {
                                     name="email"
                                     type="email"
                                     required
-                                    className="block w-full rounded-md border-0 bg-zinc-50 px-4 py-3.5 text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-200 placeholder:text-zinc-400 focus:bg-white focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6 transition-all duration-200 focus:outline-none"
+                                    className="block w-full rounded-md border-0 bg-zinc-50 px-4 py-3.5 text-zinc-900 shadow-sm ring-1 ring-inset ring-(--input-border) placeholder:text-(--input-placeholder) focus:bg-white focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6 transition-all duration-200 focus:outline-none"
                                     placeholder="name@example.com"
                                 />
                             </div>
@@ -80,7 +80,7 @@ export default function Page() {
                             <div className="space-y-1.5">
                                 <label
                                     htmlFor="password"
-                                    className="block text-xs font-medium text-zinc-500 uppercase tracking-wider"
+                                    className="block text-xs font-medium text-(--text-primary) uppercase tracking-wider"
                                 >
                                     Password
                                 </label>
@@ -89,7 +89,7 @@ export default function Page() {
                                     name="password"
                                     type="password"
                                     required
-                                    className="block w-full rounded-md border-0 bg-zinc-50 px-4 py-3.5 text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-200 placeholder:text-zinc-400 focus:bg-white focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6 transition-all duration-200 focus:outline-none"
+                                    className="block w-full rounded-md border-0 bg-zinc-50 px-4 py-3.5 text-zinc-900 shadow-sm ring-1 ring-inset ring-(--input-border) placeholder:text-(--input-placeholder) focus:bg-white focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6 transition-all duration-200 focus:outline-none"
                                     placeholder="Create a secure password"
                                 />
                             </div>

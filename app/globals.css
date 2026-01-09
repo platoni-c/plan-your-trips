@@ -22,7 +22,9 @@
     --color-pale-slate-950: #101014;
 
     /* backgrounds */
-    --bg-page: var(--color-pale-slate-50);
+    --bg-page: #f9fafb;
+    --bg-button: #f9fafb;
+    --bg-super-subtle: var(--color-pale-slate-50);
     --bg-subtle: var(--color-pale-slate-100);
     --bg-muted: var(--color-pale-slate-200);
     --bg-dark: var(--color-pale-slate-900);
@@ -30,26 +32,26 @@
 
     /* surfaces */
     --surface: var(--color-pale-slate-50);
-    --surface-elevated: #ffffff;
+    --surface-elevated: var(--color-pale-slate-50);
     --surface-subtle: var(--color-pale-slate-100);
     --surface-dark: var(--color-pale-slate-800);
 
     /* borders */
-    --border-subtle: var(--color-pale-slate-100);
+    --border-super-subtle: var(--color-pale-slate-900);
+    --border-subtle: var(--color-pale-slate-200);
     --border-muted: var(--color-pale-slate-300);
     --border-strong: var(--color-pale-slate-400);
     --border-on-dark: var(--color-pale-slate-700);
 
     /* text */
     --text-primary: var(--color-pale-slate-900);
-    --text-secondary: var(--color-pale-slate-700);
-    --text-muted: var(--color-pale-slate-600);
+    --text-secondary: var(--color-pale-slate-500);
+    --text-muted: var(--color-pale-slate-400);
     --text-on-dark: #f9f9fb;
     --text-on-muted: var(--color-pale-slate-800);
 
     /* ui chrome */
-    --nav-bg: var(--color-pale-slate-50);
-    --sidebar-bg: var(--color-pale-slate-100);
+    --sidebar-bg: var(--color-pale-slate-50);
 
     --input-bg: var(--color-pale-slate-50);
     --input-border: var(--color-pale-slate-300);
