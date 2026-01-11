@@ -37,7 +37,7 @@
     --surface-dark: var(--color-pale-slate-800);
 
     /* borders */
-    --border-super-subtle: var(--color-pale-slate-900);
+    --border-super-subtle: var(--color-pale-slate-100);
     --border-subtle: var(--color-pale-slate-200);
     --border-muted: var(--color-pale-slate-300);
     --border-strong: var(--color-pale-slate-400);

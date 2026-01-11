@@ -37,18 +37,18 @@ const Page = () => {
                             <List size={18} />
                         </button>
                     </div>
-                    <button className="flex items-center justify-center gap-2 bg-(--bg-dark) hover:bg-(--bg-dark-subtle) text-(--text-on-dark) py-2.5 px-5 transition-all font-medium text-sm cursor-pointer">
+                    <Link href="/trips/new" className="flex items-center justify-center gap-2 bg-(--bg-dark) hover:bg-(--bg-dark-subtle) text-(--text-on-dark) py-2.5 px-5 transition-all font-medium text-sm cursor-pointer">
                         <Plus className="w-4 h-4" />
                         <span>New Trip</span>
-                    </button>
+                    </Link>
                 </div>
             </div>
 
             {/* Trips List */}
             <div className={view === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" : "flex flex-col gap-4"}>
                 {trips.map((trip) => (
-                    <div key={trip.id} className="group">
-                        <Link href={`/trips/${trip.id}`}>
+                    <div key={trip.name} className="group">
+                        <Link href={`/trips/${trip.name}`}>
                             <div className={`
                                 bg-(--surface-elevated) border border-(--border-subtle) 
                                 hover:border-(--border-strong) transition-all duration-200 cursor-pointer
