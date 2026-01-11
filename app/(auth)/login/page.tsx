@@ -1,6 +1,58 @@
+"use client"
+
 import Link from "next/link";
+import React, { FormEvent, useState } from "react";
+import { login } from "@/utils/supabase/auth";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 
 export default function Page() {
+    const router = useRouter();
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [errorMessage, setErrorMessage] = useState("")
+    const [loading, setLoading] = useState(false)
+    const [googleLoading, setGoogleLoading] = useState(false)
+
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        setErrorMessage("")
+        setLoading(true)
+        const { error } = await login(email, password)
+
+        if (error) {
+            setErrorMessage(error.message)
+            setLoading(false)
+        } else {
+            router.push("/dashboard")
+        }
+    }
+
+    const handleGoogleLogIn = async () => {
+        try {
+            setGoogleLoading(true)
+            setErrorMessage("")
+            const supabase = createClient()
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: "google",
+                options: {
+                    redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+                },
+            })
+
+            if (error) {
+                setErrorMessage(error.message)
+                setGoogleLoading(false)
+            } else if (data?.url) {
+                // Redirect to the OAuth provider
+                window.location.href = data.url
+            }
+        } catch {
+            setErrorMessage("Failed to initiate Google sign in")
+            setGoogleLoading(false)
+        }
+    }
+
     return (
         <div className="min-h-screen flex items-center justify-center px-4">
             <div className="w-full max-w-250 grid grid-cols-1 md:grid-cols-2 bg-white rounded-2xl overflow-hidden border border-(--border-subtle)">
@@ -42,7 +94,7 @@ export default function Page() {
                             </p>
                         </div>
 
-                        <form className="space-y-5">
+                        <form className="space-y-5" onSubmit={handleSubmit}>
                             <div className="space-y-1.5">
                                 <label
                                     htmlFor="email"
@@ -54,6 +106,8 @@ export default function Page() {
                                     id="email"
                                     name="email"
                                     type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     required
                                     className="block w-full rounded-md bg-(zinc-50) px-4 py-3.5 text-zinc-900 shadow-sm ring-1 ring-inset ring-(--input-border) placeholder:text-(--input-placeholder) focus:bg-white focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6 transition-all duration-200 focus:outline-none"
                                     placeholder="name@example.com"
@@ -78,18 +132,24 @@ export default function Page() {
                                     id="password"
                                     name="password"
                                     type="password"
-                                    required
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                     className="block w-full rounded-md bg-zinc-50 px-4 py-3.5 text-zinc-900 shadow-sm ring-1 ring-inset ring-(--input-border) placeholder:text-(--input-placeholder) focus:bg-white focus:ring-inset focus:ring-black sm:text-sm sm:leading-6 transition-all duration-200 focus:outline-none"
                                     placeholder="Enter your password"
                                 />
                             </div>
 
+                            {errorMessage && (
+                                <p className="text-red-500 text-sm">{errorMessage}</p>
+                            )}
+
                             <div className="pt-2">
                                 <button
                                     type="submit"
+                                    disabled={loading}
                                     className="group relative flex w-full justify-center rounded-md bg-black px-4 py-3.5 text-sm font-medium text-white shadow-sm hover:bg-zinc-800 transition-all duration-200 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-black active:scale-[0.98]"
                                 >
-                                    Sign in
+                                    {loading ? "Signing in..." : "Sign in"}
                                 </button>
                             </div>
                         </form>
@@ -105,12 +165,16 @@ export default function Page() {
                             </div>
 
                             <div className="mt-6 grid grid-cols-2 gap-3">
-                                <button type="button" className="flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2.5 text-sm font-semibold text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-200 hover:bg-zinc-50 transition-colors focus-visible:ring-black active:scale-[0.99]">
+                                <button
+                                    onClick={handleGoogleLogIn}
+                                    type="button"
+                                    disabled={googleLoading}
+                                    className="flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2.5 text-sm font-semibold text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-200 hover:bg-zinc-50 transition-colors focus-visible:ring-black active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed">
                                     <svg className="h-5 w-5" aria-hidden="true" viewBox="0 0 24 24">
                                         <path d="M12.0003 20.45C16.667 20.45 20.5836 16.5333 20.5836 11.8667H12.0003V20.45Z" fill="#E2E8F0" />
                                         <path d="M12.0003 20.4501C7.33366 20.4501 3.41699 16.5334 3.41699 11.8668C3.41699 7.20009 7.33366 3.28342 12.0003 3.28342C14.367 3.28342 16.5087 4.24175 18.067 5.79175L15.6337 8.22509C14.7003 7.29175 13.4087 6.71675 12.0003 6.71675C9.15866 6.71675 6.85033 9.02509 6.85033 11.8668C6.85033 14.7084 9.15866 17.0168 12.0003 17.0168V20.4501Z" fill="#2D3748" />
                                     </svg>
-                                    <span className="text-sm font-medium">Google</span>
+                                    <span className="text-sm font-medium">{googleLoading ? "Loading..." : "Google"}</span>
                                 </button>
                                 <button type="button" className="flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2.5 text-sm font-semibold text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-200 hover:bg-zinc-50 transition-colors focus-visible:ring-black active:scale-[0.99]">
                                     <svg className="h-5 w-5 text-black" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">

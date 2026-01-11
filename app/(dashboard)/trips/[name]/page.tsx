@@ -10,12 +10,16 @@ interface PageProps {
 
 const Page = async ({ params }: PageProps) => {
     const data = await params
-    const trip = trips.find((t) => t.id === data.id);
+    const trip = trips.find((trip) => trip.name === data.id);
 
     if (!trip) {
+        console.log("Could not find trip with id " + data.id);
         return (
-            <div className="text-center py-12 text-sm text-(--text-muted) font-light">
-                No trips found. Start by creating a new one.
+            <div className="text-center py-12 text-sm text-(--text-muted)] font-light">
+                No trips found.{' '}
+                <Link href="/trips" className="text(--text-primary) hover:underline">
+                    Go back to Trips
+                </Link>
             </div>
         );
     }
