@@ -1,0 +1,65 @@
+@import "tailwindcss";
+@import "../public/WEB/css/sentient.css";
+
+@theme {
+  --font-sans: "Sentient-Variable", "Sentient-Regular", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+
+
+:root {
+    /* scale (already defined) */
+    --color-pale-slate-50:  #f1f1f4;
+    --color-pale-slate-100: #e3e3e8;
+    --color-pale-slate-200: #c6c7d2;
+    --color-pale-slate-300: #aaabbb;
+    --color-pale-slate-400: #8e8fa4;
+    --color-pale-slate-500: #71738e;
+    --color-pale-slate-600: #5b5c71;
+    --color-pale-slate-700: #444555;
+    --color-pale-slate-800: #2d2e39;
+    --color-pale-slate-900: #17171c;
+    --color-pale-slate-950: #101014;
+
+    /* backgrounds */
+    --bg-page: #f9fafb;
+    --bg-button: #f9fafb;
+    --bg-super-subtle: var(--color-pale-slate-50);
+    --bg-subtle: var(--color-pale-slate-100);
+    --bg-muted: var(--color-pale-slate-200);
+    --bg-dark: var(--color-pale-slate-900);
+    --bg-dark-subtle: var(--color-pale-slate-800);
+
+    /* surfaces */
+    --surface: var(--color-pale-slate-50);
+    --surface-elevated: var(--color-pale-slate-50);
+    --surface-subtle: var(--color-pale-slate-100);
+    --surface-dark: var(--color-pale-slate-800);
+
+    /* borders */
+    --border-super-subtle: var(--color-pale-slate-100);
+    --border-subtle: var(--color-pale-slate-200);
+    --border-muted: var(--color-pale-slate-300);
+    --border-strong: var(--color-pale-slate-400);
+    --border-on-dark: var(--color-pale-slate-700);
+
+    /* text */
+    --text-primary: var(--color-pale-slate-900);
+    --text-secondary: var(--color-pale-slate-500);
+    --text-muted: var(--color-pale-slate-400);
+    --text-on-dark: #f9f9fb;
+    --text-on-muted: var(--color-pale-slate-800);
+
+    /* ui chrome */
+    --sidebar-bg: var(--color-pale-slate-50);
+
+    --input-bg: var(--color-pale-slate-50);
+    --input-border: var(--color-pale-slate-300);
+    --input-border-focus: var(--color-pale-slate-400);
+    --input-text: var(--text-primary);
+    --input-placeholder: var(--text-muted);
+}
+
+body {
+    font-family: 'Sentient-Regular', sans-serif;
+}
