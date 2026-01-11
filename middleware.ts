@@ -2,6 +2,16 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname
+
+  // Allow public routes and auth callback
+  if (
+    pathname === '/' ||
+    pathname.startsWith('/login') ||
+    pathname.startsWith('/auth')
+  ) {
+    return NextResponse.next()
+  }
   let supabaseResponse = NextResponse.next({
     request,
   })
