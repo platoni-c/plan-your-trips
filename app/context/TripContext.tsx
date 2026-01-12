@@ -9,6 +9,7 @@ export interface Trip {
     destination: string
     start_date: string
     end_date: string
+    description: string
     budget: string
     status: string
 }
@@ -30,7 +31,7 @@ export const TripsProvider = ({ children }: { children: React.ReactNode }) => {
 
         const { data, error } = await supabase
             .from("trips")
-            .select("id, name, destination, start_date, end_date, budget, status")
+            .select("id, name, destination, start_date, end_date, description, budget, status")
             .order("start_date", { ascending: true })
 
         if (error) {

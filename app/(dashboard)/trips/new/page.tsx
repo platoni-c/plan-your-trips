@@ -29,7 +29,6 @@ const Page = () => {
             setIsLoading(false)
             return
         }
-
         const { data, error } = await supabase
             .from('trips')
             .insert([

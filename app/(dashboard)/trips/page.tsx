@@ -3,9 +3,23 @@
 import React, { useState } from 'react'
 import { Plus, Calendar, MapPin, MoreHorizontal, LayoutGrid, List, Clock, Wallet } from 'lucide-react'
 import Link from "next/link";
-import { trips } from '../../lib/data';
+import {useTrips} from "@/app/context/TripContext";
+
+const calculateDuration = (start: string, end: string) => {
+    const startDate = new Date(start)
+    const endDate = new Date(end)
+
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) return "—"
+
+    const diffTime = endDate.getTime() - startDate.getTime()
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+    return `${diffDays} day${diffDays !== 1 ? "s" : ""}`
+}
 
 const Page = () => {
+
+    const  { trips } = useTrips()
 
     const [view, setView] = useState<"grid" | "list">("grid")
 
@@ -48,7 +62,7 @@ const Page = () => {
             <div className={view === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" : "flex flex-col gap-4"}>
                 {trips.map((trip) => (
                     <div key={trip.name} className="group">
-                        <Link href={`/trips/${trip.name}`}>
+                        <Link href={`/trips/${trip.id}`}>
                             <div className={`
                                 bg-(--surface-elevated) border border-(--border-subtle) 
                                 hover:border-(--border-strong) transition-all duration-200 cursor-pointer
@@ -114,23 +128,25 @@ const Page = () => {
                                         {view === 'grid' && (
                                             <div className="flex items-center gap-2.5 pt-4 border-t border-(--border-super-subtle)">
                                                 <MapPin className="w-4 h-4 text-(--text-muted)" />
-                                                <span>{trip.destination}</span>
+                                                <span>{String(trip.destination).toUpperCase()}</span>
                                             </div>
                                         )}
 
                                         <div className="flex items-center gap-2.5">
                                             <Calendar className="w-4 h-4 text-(--text-muted)" />
-                                            <span>{trip.date}</span>
+                                            <span>{trip.start_date}</span>
                                         </div>
 
                                         <div className="flex items-center gap-2.5">
                                             <Clock className="w-4 h-4 text-(--text-muted)" />
-                                            <span>{trip.duration}</span>
+                                            <span>
+                                                {calculateDuration(trip.start_date, trip.end_date)}
+                                            </span>
                                         </div>
 
                                         <div className="flex items-center gap-2.5">
                                             <Wallet className="w-4 h-4 text-(--text-muted)" />
-                                            <span>{trip.budget}</span>
+                                            <span>{"Ksh " + Number(trip.budget).toLocaleString()}</span>
                                         </div>
                                     </div>
                                 </div>

@@ -90,23 +90,36 @@ const SideBar = () => {
             </nav>
 
             {/* User Profile / Footer */}
-            <div className="p-4 border-t border-(--border-subtle) hover:bg-(--bg-button)">
-                <div className="flex items-center gap-3 rounded-md transition-colors group">
-                    <div className="w-9 h-9 rounded-full bg-(--bg-super-subtle) flex items-center justify-center text-(--text-secondary) text-xs font-medium border border-(--border-subtle)">
-                        {profile?.full_name ? getInitials(profile.full_name) : "?"}
+            <div className="p-4 border-t border-(--border-subtle)">
+                {profile ? (
+                    <div className="flex items-center gap-3 rounded-md transition-colors group hover:bg-(--bg-button)">
+                        <div className="w-9 h-9 rounded-full bg-(--bg-super-subtle) flex items-center justify-center text-(--text-secondary) text-xs font-medium border border-(--border-subtle)">
+                            {profile.full_name ? getInitials(profile.full_name) : "?"}
+                        </div>
+                        <div className="flex-1 overflow-hidden">
+                            <p className="text-sm font-medium text-(--text-primary) truncate capitalize">
+                                {loading ? "Loading..." : profile.full_name}
+                            </p>
+                            <p className="text-xs text-(--text-secondary) truncate">
+                                {profile.email}
+                            </p>
+                        </div>
+                        <button
+                            className="hover:bg-(--bg-subtle) p-2 rounded-full cursor-pointer"
+                            onClick={signOut}
+                            aria-label="Log out"
+                        >
+                            <LogOut className="w-4 h-4 text-(--text-primary) transition-colors" />
+                        </button>
                     </div>
-                    <div className="flex-1 overflow-hidden">
-                        <p className="text-sm font-medium text-(--text-primary) truncate capitalize">
-                            {loading ? "Loading..." : profile?.full_name}
-                        </p>
-                        <p className="text-xs text-(--text-secondary) truncate">
-                            {profile?.email}
-                        </p>
-                    </div>
-                    <button className="hover:bg-(--bg-subtle) p-2 rounded-full cursor-pointer" onClick={signOut}>
-                        <LogOut className="w-4 h-4 text-(--text-primary) transition-colors" />
-                    </button>
-                </div>
+                ) : (
+                    <Link
+                        href="/login"
+                        className="flex items-center justify-center gap-2 w-full bg-(--bg-dark) hover:bg-(--bg-dark-subtle) text-white py-2.5 px-4 transition-all shadow-sm font-medium text-sm rounded-md"
+                    >
+                        Log in
+                    </Link>
+                )}
             </div>
         </div>
     )

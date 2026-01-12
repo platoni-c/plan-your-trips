@@ -34,25 +34,52 @@ export default function Page() {
     }
 
     const handleGoogleLogIn = async () => {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/22c8983f-50a4-45be-b400-8115f80a8fdd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'register/page.tsx:36', message: 'Google signup initiated', data: { page: 'register' }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
+        // #endregion
         try {
             setGoogleLoading(true)
             setErrorMessage("")
+            // Use environment variable if available, otherwise use current origin
+            const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
+            const redirectUrl = `${baseUrl}/auth/callback?next=/dashboard`
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/22c8983f-50a4-45be-b400-8115f80a8fdd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'register/page.tsx:41', message: 'Redirect URL prepared', data: { redirectUrl }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'F' }) }).catch(() => { });
+            // #endregion
             const supabase = createClient()
             const { data, error } = await supabase.auth.signInWithOAuth({
                 provider: "google",
                 options: {
-                    redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+                    redirectTo: redirectUrl,
                 },
             })
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/22c8983f-50a4-45be-b400-8115f80a8fdd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'register/page.tsx:51', message: 'signInWithOAuth response', data: { hasError: !!error, errorMessage: error?.message, hasUrl: !!data?.url, url: data?.url?.substring(0, 50) }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
+            // #endregion
 
             if (error) {
+                // #region agent log
+                fetch('http://127.0.0.1:7242/ingest/22c8983f-50a4-45be-b400-8115f80a8fdd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'register/page.tsx:54', message: 'OAuth error detected', data: { errorMessage: error.message, errorName: error.name }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
+                // #endregion
                 setErrorMessage(error.message)
                 setGoogleLoading(false)
             } else if (data?.url) {
+                // #region agent log
+                fetch('http://127.0.0.1:7242/ingest/22c8983f-50a4-45be-b400-8115f80a8fdd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'register/page.tsx:59', message: 'Redirecting to OAuth provider', data: { url: data.url.substring(0, 100) }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'C' }) }).catch(() => { });
+                // #endregion
                 // Redirect to the OAuth provider
                 window.location.href = data.url
+            } else {
+                // #region agent log
+                fetch('http://127.0.0.1:7242/ingest/22c8983f-50a4-45be-b400-8115f80a8fdd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'register/page.tsx:64', message: 'No URL returned from OAuth', data: { hasData: !!data, hasUrl: !!data?.url }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'C' }) }).catch(() => { });
+                // #endregion
+                setErrorMessage("Failed to initiate Google sign in - no URL returned")
+                setGoogleLoading(false)
             }
-        } catch {
+        } catch (err) {
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/22c8983f-50a4-45be-b400-8115f80a8fdd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'register/page.tsx:70', message: 'Exception in Google signup', data: { error: err instanceof Error ? err.message : String(err) }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'D' }) }).catch(() => { });
+            // #endregion
             setErrorMessage("Failed to initiate Google sign in")
             setGoogleLoading(false)
         }
