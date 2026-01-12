@@ -17,7 +17,21 @@ const Page = () => {
     const [tripStartDate, setTripStartDate] = useState("")
     const [tripEndDate, setTripEndDate] = useState("")
 
-    const { profile } = useUser()
+    const { profile, loading } = useUser()
+
+    React.useEffect(() => {
+        if (!loading && !profile) {
+            router.push('/unlock-features')
+        }
+    }, [profile, loading, router])
+
+    if (loading) {
+        return <div className="p-8">Loading...</div>
+    }
+
+    if (!profile) {
+        return null // Prevent flash before redirect
+    }
     const today = new Date().toISOString().split('T')[0];
 
     const handleSubmit = async (e: React.FormEvent) => {

@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { Plus, Calendar, MapPin, LayoutGrid, List, Clock, Wallet, ArrowRight, Trash2 } from 'lucide-react'
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTrips } from "@/app/context/TripContext";
 import { useUser } from "@/app/context/UserContext";
 import { canDeleteTrip, getStatusStyles } from "@/utils/tripStatus";
@@ -21,9 +22,24 @@ const calculateDuration = (start: string, end: string) => {
 }
 
 const Page = () => {
+    const router = useRouter()
     const { trips, setTrips } = useTrips()
-    const { profile } = useUser()
+    const { profile, loading } = useUser()
     const [view, setView] = useState<"grid" | "list">("grid")
+
+    React.useEffect(() => {
+        if (!loading && !profile) {
+            router.push('/unlock-features')
+        }
+    }, [profile, loading, router])
+
+    if (loading) {
+        return <div className="p-8">Loading...</div>
+    }
+
+    if (!profile) {
+        return null // Prevent flash before redirect
+    }
 
     const handleDeleteTrip = async (tripId: string, status: string, e: React.MouseEvent) => {
         e.preventDefault();
