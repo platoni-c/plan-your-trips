@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { LayoutDashboard, Map, PiggyBank, Settings, Plus, LogOut } from 'lucide-react'
 import { usePathname } from 'next/navigation'
-import {useUser} from "@/app/context/UserContext";
+import { useUser } from "@/app/context/UserContext";
 
 interface SideBarLinkProps {
     href: string;
@@ -56,7 +56,7 @@ const SideBar = () => {
 
             {/* Create Trip Action */}
             <div className="px-4 mb-8">
-                <Link href="/trips/new">
+                <Link href={profile ? "/trips/new" : "/unlock-features"}>
                     <button className="w-full flex items-center justify-center gap-2 bg-(--bg-dark) hover:bg-(--bg-dark-subtle) text-white py-2.5 px-4 transition-all shadow-sm font-medium text-sm">
                         <Plus className="w-4 h-4" />
                         <span className="capitalize">Plan a new trip</span>

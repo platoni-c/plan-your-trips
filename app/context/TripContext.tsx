@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react"
 import { createClient } from "@/utils/supabase/client"
+import { calculateTripStatus } from "@/utils/tripStatus"
 
 export interface Trip {
     id: string
@@ -18,6 +19,7 @@ interface TripsContextType {
     trips: Trip[]
     loading: boolean
     fetchTrips: () => Promise<void>
+    setTrips: (trips: Trip[]) => void
 }
 
 const TripsContext = createContext<TripsContextType | null>(null)
@@ -38,7 +40,29 @@ export const TripsProvider = ({ children }: { children: React.ReactNode }) => {
         if (error) {
             console.error("Failed to fetch trips", error)
         } else {
-            setTrips(data ?? [])
+            if (data) {
+                // Check and update statuses
+                const updatedTrips = await Promise.all(data.map(async (trip) => {
+                    const correctStatus = calculateTripStatus(trip, data);
+
+                    if (trip.status !== correctStatus) {
+                        console.log(`Updating status for trip ${trip.name} from ${trip.status} to ${correctStatus}`);
+                        // Update in database
+                        await supabase
+                            .from('trips')
+                            .update({ status: correctStatus })
+                            .eq('id', trip.id);
+
+                        return { ...trip, status: correctStatus };
+                    }
+
+                    return trip;
+                }));
+
+                setTrips(updatedTrips);
+            } else {
+                setTrips([]);
+            }
         }
 
         setLoading(false)
@@ -56,6 +80,7 @@ export const TripsProvider = ({ children }: { children: React.ReactNode }) => {
                 trips,
                 loading,
                 fetchTrips,
+                setTrips,
             }}
         >
             {children}

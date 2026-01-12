@@ -1,9 +1,61 @@
-import React from 'react'
-import { User, Bell, Shield, Moon, Monitor, Smartphone, ChevronRight } from 'lucide-react'
+"use client"
+
+import React, { useState } from 'react'
+import { User, Bell, Shield, Moon, Monitor, Smartphone, ChevronRight, Check, X } from 'lucide-react'
+import { useUser } from "@/app/context/UserContext"
+import { createClient } from "@/utils/supabase/client"
 
 const Page = () => {
+    const { profile, loading, signOut } = useUser()
+    const [isEditing, setIsEditing] = useState(false)
+    const [newName, setNewName] = useState("")
+    const [isSaving, setIsSaving] = useState(false)
+
+    // Initialize edit state with current name when entering edit mode
+    const handleEditClick = () => {
+        setNewName(profile?.full_name || "")
+        setIsEditing(true)
+    }
+
+    const handleCancelEdit = () => {
+        setIsEditing(false)
+        setNewName("")
+    }
+
+    const handleSaveProfile = async () => {
+        if (!profile) return
+        setIsSaving(true)
+
+        const supabase = createClient()
+        const { error } = await supabase
+            .from('users')
+            .update({ full_name: newName })
+            .eq('id', profile.id)
+
+        if (error) {
+            console.error("Error updating profile:", error)
+            alert("Failed to update profile")
+        } else {
+            window.location.reload()
+        }
+        setIsSaving(false)
+        setIsEditing(false)
+    }
+
+    if (loading) {
+        return (
+            <div className="p-8 mx-auto max-w-4xl min-h-screen">
+                <p className="text-sm text-zinc-500">Loading settings...</p>
+            </div>
+        )
+    }
+
+    const initials = profile?.full_name
+        ? profile.full_name.split(' ').map((n: string) => n[0]).join('').toUpperCase().substring(0, 2)
+        : profile?.email?.substring(0, 2).toUpperCase() || "??"
+
     return (
-        <div className="p-8 mx-auto max-w-4xl">
+        <div className="p-8 mx-auto max-w-5xl">
             {/* Header */}
             <div className="mb-10">
                 <h1 className="text-2xl font-medium text-zinc-900 tracking-tight">
@@ -28,15 +80,53 @@ const Page = () => {
                     <div className="p-6">
                         <div className="flex items-center gap-6">
                             <div className="w-16 h-16 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 text-xl font-medium border border-zinc-200">
-                                SM
+                                {initials}
                             </div>
                             <div className="flex-1">
-                                <h3 className="text-base font-medium text-zinc-900">Samuel Mukabi</h3>
-                                <p className="text-sm text-zinc-500">samuel@example.com</p>
+                                {isEditing ? (
+                                    <div className="flex items-center gap-2 max-w-xs">
+                                        <input
+                                            type="text"
+                                            value={newName}
+                                            onChange={(e) => setNewName(e.target.value)}
+                                            className="w-full border border-zinc-300 rounded px-2 py-1 text-base font-medium text-zinc-900 outline-none focus:border-zinc-500 transition-colors"
+                                            placeholder="Full Name"
+                                            autoFocus
+                                        />
+                                    </div>
+                                ) : (
+                                    <h3 className="text-base font-medium text-zinc-900">
+                                        {profile?.full_name || "No Name Set"}
+                                    </h3>
+                                )}
+                                <p className="text-sm text-zinc-500 mt-1">{profile?.email}</p>
                             </div>
-                            <button className="text-sm font-medium text-zinc-900 border border-zinc-200 px-4 py-2 rounded-md hover:bg-zinc-50 transition-colors">
-                                Edit
-                            </button>
+
+                            {isEditing ? (
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={handleSaveProfile}
+                                        disabled={isSaving}
+                                        className="text-zinc-900 hover:text-green-600 border border-zinc-200 p-2 rounded-md hover:bg-zinc-50 transition-colors"
+                                    >
+                                        <Check className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        onClick={handleCancelEdit}
+                                        disabled={isSaving}
+                                        className="text-zinc-500 hover:text-red-500 border border-zinc-200 p-2 rounded-md hover:bg-zinc-50 transition-colors"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            ) : (
+                                <button
+                                    onClick={handleEditClick}
+                                    className="text-sm font-medium text-zinc-900 border border-zinc-200 px-4 py-2 rounded-md hover:bg-zinc-50 transition-colors"
+                                >
+                                    Edit
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -112,7 +202,10 @@ const Page = () => {
                 </div>
 
                 <div className="pt-6 border-t border-zinc-100">
-                    <button className="text-sm font-medium text-red-600 hover:text-red-700 transition-colors">
+                    <button
+                        onClick={() => signOut()}
+                        className="text-sm font-medium text-red-600 hover:text-red-700 transition-colors"
+                    >
                         Sign Out
                     </button>
                 </div>

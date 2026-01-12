@@ -1,10 +1,10 @@
 "use client"
 
 import React, { useState } from 'react'
-import {ArrowRight, Plus} from 'lucide-react'
+import { ArrowRight, Plus } from 'lucide-react'
 import Link from "next/link";
-import {useTrips} from "@/app/context/TripContext";
-import {useUser} from "@/app/context/UserContext";
+import { useTrips } from "@/app/context/TripContext";
+import { useUser } from "@/app/context/UserContext";
 
 
 const Page = () => {
@@ -27,7 +27,7 @@ const Page = () => {
     return (
         <div className="p-8 mx-auto max-w-5xl">
             {/* Header */}
-                <h2 className="text-left text-4xl font-medium text-(--text-primary) tracking-light mb-4"> Welcome<span className="capitalize">{profile?.full_name ? ", " + profile.full_name : " To Plan Your Trips"}</span></h2>
+            <h2 className="text-left text-4xl font-medium text-(--text-primary) tracking-light mb-4"> Welcome<span className="capitalize">{profile?.full_name ? ", " + profile.full_name : " To Plan Your Trips"}</span></h2>
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                 <div>
                     <h1 className="text-2xl font-medium text-(--text-primary) tracking-tight">
@@ -37,7 +37,7 @@ const Page = () => {
                         Overview of your current travel plans, budgets, and upcoming adventures.
                     </p>
                 </div>
-                <Link href="/trips/new" className="flex items-center justify-center gap-2 bg-(--bg-dark) hover:bg-(--bg-dark-subtle) text-white py-2.5 px-5 transition-all shadow-sm font-medium text-sm">
+                <Link href={profile ? "/trips/new" : "/unlock-features"} className="flex items-center justify-center gap-2 bg-(--bg-dark) hover:bg-(--bg-dark-subtle) text-white py-2.5 px-5 transition-all shadow-sm font-medium text-sm">
                     <Plus className="w-4 h-4" />
                     <span>New Trip</span>
                 </Link>
