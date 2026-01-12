@@ -61,7 +61,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         const supabase = createClient()
         await supabase.auth.signOut()
         setProfile(null)
-        window.location.href = "/login"
+        window.location.href = "/"
     }
 
     return (
