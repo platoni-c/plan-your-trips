@@ -7,5 +7,5 @@ export function createClient() {
   )
 }
 
-// Export a default instance for backward compatibility
-export const supabase = createClient()
+// Export a default instance for backward compatibility - REMOVED to prevent build-time side effects
+// export const supabase = createClient()

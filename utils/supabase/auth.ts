@@ -5,6 +5,7 @@ import { AuthError, AuthResponse as SupabaseAuthResponse } from "@supabase/supab
 type AuthResponse = {
   data: SupabaseAuthResponse["data"] | null;
   error: AuthError | null;
+  url?: string | null;
 };
 
 // REGISTER
@@ -60,4 +61,20 @@ export async function login(
   return { data, error };
 }
 
+// LOGIN WITH GOOGLE
+export async function loginWithGoogle() {
+  const supabase = createClient()
 
+  // Use environment variable if available, otherwise use window location (this function should be called from client side)
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
+  const redirectUrl = `${baseUrl}/auth/callback?next=/dashboard`
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: redirectUrl,
+    },
+  });
+
+  return { data, error };
+}

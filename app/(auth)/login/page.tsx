@@ -1,14 +1,11 @@
 "use client"
 
 import Link from "next/link";
-import React, { FormEvent, useState, useEffect } from "react";
-import { login } from "@/utils/supabase/auth";
+import React, { FormEvent, useState, useEffect, Suspense } from "react";
+import { login, loginWithGoogle } from "@/utils/supabase/auth";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
 
-export const dynamic = 'force-dynamic'
-
-export default function Page() {
+function LoginForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [email, setEmail] = useState("")
@@ -45,52 +42,23 @@ export default function Page() {
     }
 
     const handleGoogleLogIn = async () => {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/22c8983f-50a4-45be-b400-8115f80a8fdd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'login/page.tsx:42', message: 'Google login initiated', data: { page: 'login' }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
-        // #endregion
         try {
             setGoogleLoading(true)
             setErrorMessage("")
-            // Use environment variable if available, otherwise use current origin
-            const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
-            const redirectUrl = `${baseUrl}/auth/callback?next=/dashboard`
-            // #region agent log
-            fetch('http://127.0.0.1:7242/ingest/22c8983f-50a4-45be-b400-8115f80a8fdd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'login/page.tsx:47', message: 'Redirect URL prepared', data: { redirectUrl }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'F' }) }).catch(() => { });
-            // #endregion
-            const supabase = createClient()
-            const { data, error } = await supabase.auth.signInWithOAuth({
-                provider: "google",
-                options: {
-                    redirectTo: redirectUrl,
-                },
-            })
-            // #region agent log
-            fetch('http://127.0.0.1:7242/ingest/22c8983f-50a4-45be-b400-8115f80a8fdd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'login/page.tsx:56', message: 'signInWithOAuth response', data: { hasError: !!error, errorMessage: error?.message, hasUrl: !!data?.url, url: data?.url?.substring(0, 50) }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
-            // #endregion
+
+            const { data, error } = await loginWithGoogle()
 
             if (error) {
-                // #region agent log
-                fetch('http://127.0.0.1:7242/ingest/22c8983f-50a4-45be-b400-8115f80a8fdd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'login/page.tsx:59', message: 'OAuth error detected', data: { errorMessage: error.message, errorName: error.name }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
-                // #endregion
                 setErrorMessage(error.message)
                 setGoogleLoading(false)
             } else if (data?.url) {
-                // #region agent log
-                fetch('http://127.0.0.1:7242/ingest/22c8983f-50a4-45be-b400-8115f80a8fdd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'login/page.tsx:64', message: 'Redirecting to OAuth provider', data: { url: data.url.substring(0, 100) }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'C' }) }).catch(() => { });
-                // #endregion
                 // Redirect to the OAuth provider
                 window.location.href = data.url
             } else {
-                // #region agent log
-                fetch('http://127.0.0.1:7242/ingest/22c8983f-50a4-45be-b400-8115f80a8fdd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'login/page.tsx:68', message: 'No URL returned from OAuth', data: { hasData: !!data, hasUrl: !!data?.url }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'C' }) }).catch(() => { });
-                // #endregion
                 setErrorMessage("Failed to initiate Google sign in - no URL returned")
                 setGoogleLoading(false)
             }
         } catch (err) {
-            // #region agent log
-            fetch('http://127.0.0.1:7242/ingest/22c8983f-50a4-45be-b400-8115f80a8fdd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'login/page.tsx:74', message: 'Exception in Google login', data: { error: err instanceof Error ? err.message : String(err) }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'D' }) }).catch(() => { });
-            // #endregion
             setErrorMessage("Failed to initiate Google sign in")
             setGoogleLoading(false)
         }
@@ -232,5 +200,13 @@ export default function Page() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function Page() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+            <LoginForm />
+        </Suspense>
     );
 }

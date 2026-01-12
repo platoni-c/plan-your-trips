@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState } from "react"
-import { supabase } from "@/utils/supabase/client"
+import { createClient } from "@/utils/supabase/client"
 
 interface UserProfile {
     id: string          // primary key from users table
@@ -23,6 +23,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
+        const supabase = createClient()
         const loadUser = async () => {
             setLoading(true)
 
@@ -57,6 +58,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }, [])
 
     const signOut = async () => {
+        const supabase = createClient()
         await supabase.auth.signOut()
         setProfile(null)
         window.location.href = "/login"

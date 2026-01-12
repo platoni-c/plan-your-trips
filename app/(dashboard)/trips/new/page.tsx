@@ -1,11 +1,11 @@
 "use client"
 
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import { ArrowLeft, Calendar, MapPin, Wallet, Info, Plane } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import {supabase} from "@/utils/supabase/client";
-import {useUser} from "@/app/context/UserContext";
+import { createClient } from "@/utils/supabase/client";
+import { useUser } from "@/app/context/UserContext";
 
 const Page = () => {
     const router = useRouter()
@@ -29,6 +29,7 @@ const Page = () => {
             setIsLoading(false)
             return
         }
+        const supabase = createClient()
         const { data, error } = await supabase
             .from('trips')
             .insert([

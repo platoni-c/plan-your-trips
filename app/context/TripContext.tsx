@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState } from "react"
-import { supabase } from "@/utils/supabase/client"
+import { createClient } from "@/utils/supabase/client"
 
 export interface Trip {
     id: string
@@ -29,6 +29,7 @@ export const TripsProvider = ({ children }: { children: React.ReactNode }) => {
     const fetchTrips = async () => {
         setLoading(true)
 
+        const supabase = createClient()
         const { data, error } = await supabase
             .from("trips")
             .select("id, name, destination, start_date, end_date, description, budget, status")

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { supabase } from "@/utils/supabase/client"
+import { createClient } from "@/utils/supabase/client"
 
 interface UserProfile {
     full_name: string
@@ -12,6 +12,7 @@ export const useUserProfile = () => {
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
+        const supabase = createClient()
         const fetchProfile = async () => {
             setLoading(true)
 
