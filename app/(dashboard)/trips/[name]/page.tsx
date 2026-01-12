@@ -6,6 +6,7 @@ import { ArrowLeft, Calendar, MapPin, Wallet, Clock, Plus, Trash2, TrendingUp, C
 import { useTrips } from '@/app/context/TripContext';
 import { useParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
+import posthog from "posthog-js";
 
 interface Expense {
     id: number;
@@ -129,7 +130,18 @@ const Page = () => {
         if (error) {
             console.error(error);
             alert('Failed to add expense');
+            posthog.capture('expense_add_failed', {
+                trip_id: tripId,
+                error_message: error.message,
+            })
         } else if (data) {
+            // Capture expense added event
+            posthog.capture('expense_added', {
+                trip_id: tripId,
+                amount: amount,
+                category: newExpense.category,
+                description_length: newExpense.description.length,
+            })
             setExpenses([data, ...expenses]);
             setNewExpense({ description: '', amount: '', category: 'General' });
         }
@@ -142,6 +154,11 @@ const Page = () => {
         const { error } = await supabase.from('expenses').delete().eq('id', id);
 
         if (!error) {
+            // Capture expense deleted event
+            posthog.capture('expense_deleted', {
+                trip_id: tripId,
+                expense_id: id,
+            })
             setExpenses(expenses.filter(e => e.id !== id));
         }
     };
@@ -161,6 +178,11 @@ const Page = () => {
             .single();
 
         if (!error && data) {
+            // Capture itinerary day added event
+            posthog.capture('itinerary_day_added', {
+                trip_id: tripId,
+                day_number: nextDayNumber,
+            })
             setItineraryDays([...itineraryDays, { ...data, activities: [] }]);
             setExpandedDays(new Set([...expandedDays, data.id]));
         }
@@ -195,6 +217,13 @@ const Page = () => {
             .single();
 
         if (!error && data) {
+            // Capture activity added event
+            posthog.capture('itinerary_activity_added', {
+                trip_id: tripId,
+                day_id: dayId,
+                has_time: !!activityData.time,
+                has_location: !!activityData.location,
+            })
             setItineraryDays(itineraryDays.map(day =>
                 day.id === dayId
                     ? { ...day, activities: [...day.activities, data] }
@@ -381,7 +410,7 @@ const Page = () => {
                                                 {/* Activities List */}
                                                 {day.activities.map((activity) => (
                                                     <div key={activity.id} className="group flex gap-4 p-3 rounded-lg hover:bg-(--bg-subtle)/30 transition-colors">
-                                                        <div className="flex-shrink-0 w-20 text-xs font-medium text-(--text-secondary)">
+                                                        <div className="shrink-0 w-20 text-xs font-medium text-(--text-secondary)">
                                                             {activity.time || '—'}
                                                         </div>
                                                         <div className="flex-1">

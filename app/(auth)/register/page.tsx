@@ -4,7 +4,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { register, loginWithGoogle } from "@/utils/supabase/auth";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import posthog from "posthog-js";
 
 export const dynamic = 'force-dynamic'
 
@@ -27,7 +27,20 @@ export default function Page() {
         if (error) {
             setErrorMessage(error.message)
             setLoading(false)
+            // Capture registration error
+            posthog.capture('user_signup_failed', {
+                error_message: error.message,
+            })
         } else {
+            // Identify the user with their email
+            posthog.identify(email, {
+                email: email,
+                name: fullName,
+            })
+            // Capture successful registration
+            posthog.capture('user_signed_up', {
+                signup_method: 'email',
+            })
 
             router.push("/dashboard")
             setLoading(false)
@@ -39,11 +52,20 @@ export default function Page() {
             setGoogleLoading(true)
             setErrorMessage("")
 
+            // Capture Google auth initiation
+            posthog.capture('google_auth_initiated', {
+                page: 'register',
+            })
+
             const { data, error } = await loginWithGoogle()
 
             if (error) {
                 setErrorMessage(error.message)
                 setGoogleLoading(false)
+                posthog.capture('google_auth_failed', {
+                    error_message: error.message,
+                    page: 'register',
+                })
             } else if (data?.url) {
                 // Redirect to the OAuth provider
                 window.location.href = data.url
@@ -54,6 +76,7 @@ export default function Page() {
         } catch (err) {
             setErrorMessage("Failed to initiate Google sign in")
             setGoogleLoading(false)
+            posthog.captureException(err)
         }
     }
 

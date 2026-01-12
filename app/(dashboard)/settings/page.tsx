@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { User, Bell, Shield, Moon, Monitor, Smartphone, ChevronRight, Check, X } from 'lucide-react'
 import { useUser } from "@/app/context/UserContext"
 import { createClient } from "@/utils/supabase/client"
+import posthog from "posthog-js"
 
 const Page = () => {
     const { profile, loading, signOut } = useUser()
@@ -35,7 +36,14 @@ const Page = () => {
         if (error) {
             console.error("Error updating profile:", error)
             alert("Failed to update profile")
+            posthog.capture('profile_update_failed', {
+                error_message: error.message,
+            })
         } else {
+            // Capture profile update success
+            posthog.capture('profile_updated', {
+                field_updated: 'full_name',
+            })
             window.location.reload()
         }
         setIsSaving(false)
@@ -203,7 +211,11 @@ const Page = () => {
 
                 <div className="pt-6 border-t border-zinc-100">
                     <button
-                        onClick={() => signOut()}
+                        onClick={() => {
+                            // Capture sign out event before signing out
+                            posthog.capture('user_signed_out')
+                            signOut()
+                        }}
                         className="text-sm font-medium text-red-600 hover:text-red-700 transition-colors"
                     >
                         Sign Out

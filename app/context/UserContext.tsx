@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react"
 import { createClient } from "@/utils/supabase/client"
+import posthog from "posthog-js"
 
 interface UserProfile {
     id: string          // primary key from users table
@@ -42,6 +43,16 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 .single()
 
             setProfile(data ?? null)
+
+            // Identify user in PostHog when profile is loaded
+            if (data) {
+                posthog.identify(data.email, {
+                    email: data.email,
+                    name: data.full_name,
+                    user_id: data.id,
+                })
+            }
+
             setLoading(false)
         }
 
@@ -60,6 +71,10 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const signOut = async () => {
         const supabase = createClient()
         await supabase.auth.signOut()
+
+        // Reset PostHog identity on logout
+        posthog.reset()
+
         setProfile(null)
         window.location.href = "/"
     }

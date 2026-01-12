@@ -4,6 +4,7 @@ import Link from "next/link";
 import React, { FormEvent, useState, useEffect, Suspense } from "react";
 import { login, loginWithGoogle } from "@/utils/supabase/auth";
 import { useRouter, useSearchParams } from "next/navigation";
+import posthog from "posthog-js";
 
 function LoginForm() {
     const router = useRouter();
@@ -35,7 +36,20 @@ function LoginForm() {
         if (error) {
             setErrorMessage(error.message)
             setLoading(false)
+            // Capture login error
+            posthog.capture('user_login_failed', {
+                error_message: error.message,
+            })
         } else {
+            // Identify the user with their email
+            posthog.identify(email, {
+                email: email,
+            })
+            // Capture successful login
+            posthog.capture('user_logged_in', {
+                login_method: 'email',
+            })
+
             router.push("/dashboard")
             setLoading(false)
         }
@@ -46,11 +60,20 @@ function LoginForm() {
             setGoogleLoading(true)
             setErrorMessage("")
 
+            // Capture Google auth initiation
+            posthog.capture('google_auth_initiated', {
+                page: 'login',
+            })
+
             const { data, error } = await loginWithGoogle()
 
             if (error) {
                 setErrorMessage(error.message)
                 setGoogleLoading(false)
+                posthog.capture('google_auth_failed', {
+                    error_message: error.message,
+                    page: 'login',
+                })
             } else if (data?.url) {
                 // Redirect to the OAuth provider
                 window.location.href = data.url
@@ -61,6 +84,7 @@ function LoginForm() {
         } catch (err) {
             setErrorMessage("Failed to initiate Google sign in")
             setGoogleLoading(false)
+            posthog.captureException(err)
         }
     }
 

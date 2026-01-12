@@ -1,7 +1,8 @@
 "use client"
 
 import Link from 'next/link'
-import { Sparkles, ArrowLeft, Lock } from 'lucide-react'
+import { ArrowLeft, Lock } from 'lucide-react'
+import posthog from "posthog-js"
 
 export default function UnlockFeaturesPage() {
     return (
@@ -24,12 +25,22 @@ export default function UnlockFeaturesPage() {
             <div className="flex flex-col sm:flex-row gap-4 w-full max-w-xs">
                 <Link
                     href="/login"
+                    onClick={() => {
+                        posthog.capture('viewed_unlock_features', {
+                            action: 'login_clicked',
+                        })
+                    }}
                     className="flex-1 bg-(--bg-dark) hover:bg-(--bg-dark-subtle) text-white font-medium py-3.5 transition-all shadow-lg shadow-black/5 active:scale-[0.98] flex items-center justify-center gap-2 group"
                 >
                     <span>Log In</span>
                 </Link>
                 <Link
                     href="/register"
+                    onClick={() => {
+                        posthog.capture('viewed_unlock_features', {
+                            action: 'register_clicked',
+                        })
+                    }}
                     className="flex-1 bg-white border border-(--border-subtle) text-(--text-primary) font-medium py-3.5 transition-all active:scale-[0.98]"
                 >
                     Create Account

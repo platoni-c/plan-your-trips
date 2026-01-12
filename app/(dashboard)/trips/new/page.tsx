@@ -1,11 +1,12 @@
 "use client"
 
 import React, { useState } from 'react'
-import { ArrowLeft, Calendar, MapPin, Wallet, Sparkles } from 'lucide-react'
+import { ArrowLeft, Calendar, MapPin, Wallet } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from "@/utils/supabase/client";
 import { useUser } from "@/app/context/UserContext";
+import posthog from "posthog-js";
 
 const Page = () => {
     const router = useRouter()
@@ -69,8 +70,22 @@ const Page = () => {
         if (error) {
             console.error("Unable to save your info", error)
             setIsLoading(false)
+            posthog.capture('trip_creation_failed', {
+                error_message: error.message,
+            })
             return;
         }
+
+        // Capture successful trip creation
+        posthog.capture('trip_created', {
+            trip_name: tripName,
+            destination: tripDestination,
+            budget: tripBudget ? parseFloat(tripBudget) : null,
+            start_date: tripStartDate,
+            end_date: tripEndDate,
+            has_description: !!tripDescription,
+        })
+
         router.push('/dashboard')
     }
 

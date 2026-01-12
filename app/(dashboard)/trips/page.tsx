@@ -8,6 +8,7 @@ import { useTrips } from "@/app/context/TripContext";
 import { useUser } from "@/app/context/UserContext";
 import { canDeleteTrip, getStatusStyles } from "@/utils/tripStatus";
 import { createClient } from "@/utils/supabase/client";
+import posthog from "posthog-js";
 
 const calculateDuration = (start: string, end: string) => {
     const startDate = new Date(start)
@@ -61,8 +62,17 @@ const Page = () => {
         const { error } = await supabase.from('trips').delete().eq('id', tripId);
 
         if (!error) {
+            // Capture trip deletion
+            posthog.capture('trip_deleted', {
+                trip_id: tripId,
+                trip_status: status,
+            })
             setTrips(trips.filter(t => t.id !== tripId));
         } else {
+            posthog.capture('trip_deletion_failed', {
+                trip_id: tripId,
+                error_message: error.message,
+            })
             alert('Failed to delete trip');
         }
     };
