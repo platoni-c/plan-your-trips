@@ -79,7 +79,7 @@ const Page = () => {
                     </div>
                     <div className="p-6">
                         <div className="flex items-center gap-6">
-                            <div className="w-16 h-16 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 text-xl font-medium border border-zinc-200">
+                            <div className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 text-xl font-medium border border-zinc-200">
                                 {initials}
                             </div>
                             <div className="flex-1">
